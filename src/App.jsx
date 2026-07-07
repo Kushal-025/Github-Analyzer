@@ -47,79 +47,88 @@ function App() {
   const showResults = !loading && userData;
 
   return (
-    <div className="app">
-      {/* header */}
-      <header className="app-header">
-        <div className="header-logo">
-          <GitBranch size={22} />
-          <span>DevReview</span>
-        </div>
-        <a
-          href="https://github.com"
-          target="_blank"
-          rel="noreferrer"
-          className="header-link"
-        >
-          GitHub →
-        </a>
-      </header>
+    <div className="app relative min-h-screen overflow-hidden bg-slate-950 text-slate-100">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(167,139,250,0.24),transparent_28%),radial-gradient(circle_at_85%_15%,rgba(56,189,248,0.18),transparent_30%),linear-gradient(135deg,#020617_0%,#0f172a_45%,#111827_100%)]" />
+        <div className="absolute inset-0 opacity-50 [background-image:linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:44px_44px]" />
+        <div className="absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle,rgba(124,58,237,0.26),transparent_70%)] blur-3xl" />
+        <div className="absolute bottom-0 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-cyan-400/10 blur-[120px]" />
+      </div>
 
-      <main className="app-main">
-        <Hero />
-
-        {/* search */}
-        <div className="search-container">
-          <SearchBar onSearch={fetchProfile} loading={loading} />
-          <p className="search-hint">
-            Try: <button className="hint-btn" onClick={() => fetchProfile("torvalds")}>torvalds</button>,{" "}
-            <button className="hint-btn" onClick={() => fetchProfile("gaearon")}>gaearon</button>,{" "}
-            <button className="hint-btn" onClick={() => fetchProfile("sindresorhus")}>sindresorhus</button>
-          </p>
-          
-          <RecentSearches onSelectProfile={fetchProfile} />
-        </div>
-
-        {/* error */}
-        {error && <ErrorMsg msg={error} />}
-
-        {/* loading skeleton */}
-        {loading && <LoadingSkeleton />}
-
-        {/* results */}
-        {showResults && (
-          <div className="results-wrap">
-            <ProfileCard userData={userData} />
-            <StatsSection
-              repoList={repoList}
-              topLangs={topLangs}
-              userData={userData}
-            />
-            <RepoList repoList={repoList} />
-            <SeniorDevReview
-              userData={userData}
-              repoList={repoList}
-              topLangs={topLangs}
-            />
+      <div className="relative z-10 flex min-h-screen flex-col">
+        {/* header */}
+        <header className="app-header">
+          <div className="header-logo">
+            <GitBranch size={22} />
+            <span>DevReview</span>
           </div>
-        )}
+          <a
+            href="https://github.com"
+            target="_blank"
+            rel="noreferrer"
+            className="header-link"
+          >
+            GitHub →
+          </a>
+        </header>
 
-        {/* empty state */}
-        {!loading && !error && !userData && (
-          <div className="empty-state">
-            <div className="empty-icon">
-              <GitBranch size={48} strokeWidth={1} />
+        <main className="app-main">
+          <Hero />
+
+          {/* search */}
+          <div className="search-container">
+            <SearchBar onSearch={fetchProfile} loading={loading} />
+            <p className="search-hint">
+              Try: <button className="hint-btn" onClick={() => fetchProfile("torvalds")}>torvalds</button>,{" "}
+              <button className="hint-btn" onClick={() => fetchProfile("gaearon")}>gaearon</button>,{" "}
+              <button className="hint-btn" onClick={() => fetchProfile("sindresorhus")}>sindresorhus</button>
+            </p>
+
+            <RecentSearches onSelectProfile={fetchProfile} />
+          </div>
+
+          {/* error */}
+          {error && <ErrorMsg msg={error} />}
+
+          {/* loading skeleton */}
+          {loading && <LoadingSkeleton />}
+
+          {/* results */}
+          {showResults && (
+            <div className="results-wrap">
+              <ProfileCard userData={userData} />
+              <StatsSection
+                repoList={repoList}
+                topLangs={topLangs}
+                userData={userData}
+              />
+              <RepoList repoList={repoList} />
+              <SeniorDevReview
+                userData={userData}
+                repoList={repoList}
+                topLangs={topLangs}
+              />
             </div>
-            <p>Enter a GitHub username above to get started</p>
-          </div>
-        )}
-      </main>
+          )}
 
-      <footer className="app-footer">
-        <p>
-          Uses GitHub Public API · No auth required ·{" "}
-          <span className="footer-note">60 req/hr rate limit</span>
-        </p>
-      </footer>
+          {/* empty state */}
+          {!loading && !error && !userData && (
+            <div className="empty-state">
+              <div className="empty-icon">
+                <GitBranch size={48} strokeWidth={1} />
+              </div>
+              <p>Enter a GitHub username above to get started</p>
+            </div>
+          )}
+        </main>
+
+        <footer className="app-footer">
+          <p>
+            Uses GitHub Public API · No auth required ·{" "}
+            <span className="footer-note">60 req/hr rate limit</span>
+          </p>
+        </footer>
+      </div>
     </div>
   );
 }
