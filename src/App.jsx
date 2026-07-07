@@ -3,6 +3,7 @@
 // Single page, no router needed
 
 import { GitBranch, Zap } from "lucide-react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import SearchBar from "./components/SearchBar";
 import ProfileCard from "./components/ProfileCard";
 import StatsSection from "./components/StatsSection";
@@ -129,6 +130,7 @@ function App() {
           </p>
         </footer>
       </div>
+      <SpeedInsights />
     </div>
   );
 }
