@@ -14,19 +14,22 @@ import useGitHub from "./hooks/useGitHub";
 import "./App.css";
 
 const Hero = () => (
-  <div className="hero">
-    <div className="hero-badge">
-      <Zap size={13} />
-      <span>No AI. Just honest code review logic.</span>
+  <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-slate-950/70 px-6 py-10 shadow-[0_30px_120px_rgba(124,58,237,0.18)] backdrop-blur-xl sm:px-8 lg:px-10">
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(168,85,247,0.25),_transparent_35%),radial-gradient(circle_at_bottom_right,_rgba(56,189,248,0.18),_transparent_30%)]" />
+    <div className="relative z-10">
+      <div className="hero-badge">
+        <Zap size={13} />
+        <span>No AI. Just honest code review logic.</span>
+      </div>
+      <h1 className="hero-title">
+        GitHub Profile
+        <span className="hero-title-accent"> Analyzer</span>
+      </h1>
+      <p className="hero-sub">
+        Get a straight-talking senior dev review of any GitHub profile.
+        No fluff, no buzzwords — just what's actually working and what isn't.
+      </p>
     </div>
-    <h1 className="hero-title">
-      GitHub Profile
-      <span className="hero-title-accent"> Analyzer</span>
-    </h1>
-    <p className="hero-sub">
-      Get a straight-talking senior dev review of any GitHub profile.
-      No fluff, no buzzwords — just what's actually working and what isn't.
-    </p>
   </div>
 );
 
