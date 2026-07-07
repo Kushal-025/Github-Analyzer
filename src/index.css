@@ -1,0 +1,15 @@
+/* index.css */
+/* Tailwind base + our custom stuff lives in App.css */
+@import "tailwindcss";
+
+/* reset root so our layout takes full control */
+#root {
+  width: 100%;
+  max-width: 100%;
+  text-align: left;
+  border: none;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
