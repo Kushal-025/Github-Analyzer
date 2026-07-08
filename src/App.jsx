@@ -1,14 +1,10 @@
 // App.jsx
-// Main app - puts it all together
-// Single page, no router needed
-
-import { GitBranch, Zap } from "lucide-react";
-import { SpeedInsights } from "@vercel/speed-insights/react";
+import { GitBranch, BarChart2 } from "lucide-react";
 import SearchBar from "./components/SearchBar";
 import ProfileCard from "./components/ProfileCard";
 import StatsSection from "./components/StatsSection";
 import RepoList from "./components/RepoList";
-import SeniorDevReview from "./components/SeniorDevReview";
+import ProfileReview from "./components/ProfileReview";
 import LoadingSkeleton from "./components/LoadingSkeleton";
 import RecentSearches from "./components/RecentSearches";
 import useGitHub from "./hooks/useGitHub";
@@ -19,16 +15,16 @@ const Hero = () => (
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(168,85,247,0.25),_transparent_35%),radial-gradient(circle_at_bottom_right,_rgba(56,189,248,0.18),_transparent_30%)]" />
     <div className="relative z-10">
       <div className="hero-badge">
-        <Zap size={13} />
-        <span>No AI. Just honest code review logic.</span>
+        <BarChart2 size={13} />
+        <span>Real data. Honest feedback. No fluff.</span>
       </div>
       <h1 className="hero-title">
         GitHub Profile
         <span className="hero-title-accent"> Analyzer</span>
       </h1>
       <p className="hero-sub">
-        Get a straight-talking senior dev review of any GitHub profile.
-        No fluff, no buzzwords — just what's actually working and what isn't.
+        Get a straight-talking breakdown of any GitHub profile —
+        what's working, what isn't, and what to fix next.
       </p>
     </div>
   </div>
@@ -80,11 +76,11 @@ function App() {
           <div className="search-container">
             <SearchBar onSearch={fetchProfile} loading={loading} />
             <p className="search-hint">
-              Try: <button className="hint-btn" onClick={() => fetchProfile("torvalds")}>torvalds</button>,{" "}
+              Try:{" "}
+              <button className="hint-btn" onClick={() => fetchProfile("torvalds")}>torvalds</button>,{" "}
               <button className="hint-btn" onClick={() => fetchProfile("gaearon")}>gaearon</button>,{" "}
               <button className="hint-btn" onClick={() => fetchProfile("sindresorhus")}>sindresorhus</button>
             </p>
-
             <RecentSearches onSelectProfile={fetchProfile} />
           </div>
 
@@ -104,7 +100,7 @@ function App() {
                 userData={userData}
               />
               <RepoList repoList={repoList} />
-              <SeniorDevReview
+              <ProfileReview
                 userData={userData}
                 repoList={repoList}
                 topLangs={topLangs}
@@ -125,12 +121,11 @@ function App() {
 
         <footer className="app-footer">
           <p>
-            Uses GitHub Public API · No auth required ·{" "}
-            <span className="footer-note">60 req/hr rate limit</span>
+            Uses GitHub Public API · No login required ·{" "}
+            <span className="footer-note">60 requests/hr limit</span>
           </p>
         </footer>
       </div>
-      <SpeedInsights />
     </div>
   );
 }

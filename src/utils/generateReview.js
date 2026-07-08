@@ -1,29 +1,36 @@
 // generateReview.js
-// This generates a human-like senior dev review based on github data
-// No AI, no API calls - just logic + templates that feel real
+// Generates a human-written-style profile breakdown based on GitHub data.
+// Logic-driven — no AI, no external calls.
 
 const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-// brutal openers based on profile state
+// ─── Opening line based on profile state ──────────────────────────────────────
 const getOpener = (userData, repoList, topLangs) => {
   const { public_repos, followers, bio } = userData;
-  const hasReadmePinnedDesc = repoList.filter((r) => r.description).length;
+  const reposWithDesc = repoList.filter((r) => r.description).length;
   const totalStars = repoList.reduce((sum, r) => sum + r.stargazers_count, 0);
 
-  if (public_repos === 0) return "Bro, your GitHub is emptier than my patience rn.";
-  if (!bio && public_repos < 5) return "No bio, barely any repos... you sure you're a developer?";
-  if (public_repos > 20 && totalStars < 5) return "20+ repos and barely any stars — quantity isn't the move, tbh.";
-  if (hasReadmePinnedDesc < 2) return "Half your repos have no description. A recruiter's gonna close this tab in 3 seconds.";
-  if (public_repos < 5 && followers < 3) return "Okay, you're just getting started — that's fine. But let's make what's here actually count.";
-  if (totalStars > 50) return "Solid profile tbh — you're doing better than most juniors I've seen.";
+  if (public_repos === 0)
+    return "Your GitHub is completely empty — there's nothing here to review yet. Start pushing some code and come back.";
+  if (!bio && public_repos < 5)
+    return "No bio and very few repos — it's hard to get a read on what you do. Let's change that.";
+  if (public_repos > 20 && totalStars < 5)
+    return "You've got a lot of repos but very little traction on any of them — it's quantity over quality right now.";
+  if (reposWithDesc < 2)
+    return "Most of your repos have no description at all. That's the first thing anyone notices — and it's not a good look.";
+  if (public_repos < 5 && followers < 3)
+    return "You're just getting started, and that's completely fine. But the few things you have up need to make a strong impression.";
+  if (totalStars > 50)
+    return "Genuinely solid profile — your work is getting attention and the numbers back it up.";
+
   return pickRandom([
-    "Decent enough, but there's some obvious low-hanging fruit you're missing.",
-    "Not bad, not great. Let me break down what's actually holding you back.",
-    "You've got potential here, but there are 2-3 things that are kinda killing your vibe.",
+    "Decent start, but there are a few things holding this profile back from being impressive.",
+    "Not bad overall — but there's some straightforward stuff you can fix to make this a lot stronger.",
+    "There's real potential here. A few changes and this profile tells a much better story.",
   ]);
 };
 
-// pick 2 good things based on actual data
+// ─── 2 genuine strengths from real data ──────────────────────────────────────
 const getStrengths = (userData, repoList, topLangs) => {
   const strengths = [];
   const totalStars = repoList.reduce((sum, r) => sum + r.stargazers_count, 0);
@@ -31,144 +38,149 @@ const getStrengths = (userData, repoList, topLangs) => {
   const topRepo = [...repoList].sort((a, b) => b.stargazers_count - a.stargazers_count)[0];
   const langCount = Object.keys(topLangs).length;
 
-  // star check
   if (totalStars > 10 && topRepo) {
     strengths.push(
-      `Your \`${topRepo.name}\` repo actually has ${topRepo.stargazers_count} stars — that tells me people found it useful, which is more than most can say.`
+      `Your \`${topRepo.name}\` repo has picked up ${topRepo.stargazers_count} stars — that's a real signal that people found it useful or interesting.`
     );
   }
 
-  // bio check
   if (userData.bio && userData.bio.length > 20) {
-    strengths.push(`You've got a real bio — short, to the point. Most people either skip it or write an essay, so good call.`);
+    strengths.push(
+      `You've got a clear, concise bio. A lot of developers skip this entirely, so having one already puts you ahead of many profiles.`
+    );
   }
 
-  // diversity check
   if (langCount >= 3) {
     strengths.push(
-      `You're working across ${langCount} languages (${Object.keys(topLangs).slice(0, 3).join(", ")}) — shows you're not just a one-trick pony.`
+      `Working across ${langCount} languages (${Object.keys(topLangs).slice(0, 3).join(", ")}) shows you're not locked into one tool — that's a good sign for adaptability.`
     );
   }
 
-  // desc check
   if (reposWithDesc.length >= 3) {
     strengths.push(
-      `Most of your repos actually have descriptions. Sounds small, but it's not — a lot of devs skip this entirely.`
+      `Most of your repos have descriptions — small detail, but it makes a real difference when someone's quickly scanning your profile.`
     );
   }
 
-  // repo count
   if (userData.public_repos >= 8 && userData.public_repos <= 25) {
-    strengths.push(`Good repo count — enough to show you're active, not so many it looks like you commit random stuff every day.`);
+    strengths.push(
+      `Your repo count is in a sweet spot — enough to show you're actively building, not so many that it looks scattered.`
+    );
   }
 
-  // recent activity
   const recentRepos = repoList.filter((r) => {
-    const updated = new Date(r.updated_at);
-    const diff = (Date.now() - updated) / (1000 * 60 * 60 * 24);
+    const diff = (Date.now() - new Date(r.updated_at)) / (1000 * 60 * 60 * 24);
     return diff < 60;
   });
   if (recentRepos.length > 0) {
-    strengths.push(`You've been active recently — \`${recentRepos[0].name}\` was updated not that long ago. Consistency looks good to anyone hiring.`);
+    strengths.push(
+      `You've been active recently — \`${recentRepos[0].name}\` was updated not long ago. Consistent activity looks great to anyone checking your profile.`
+    );
   }
 
-  // fallback
   if (strengths.length === 0) {
-    strengths.push("At least your profile is public and not literally empty. That's... a start.");
+    strengths.push("Your profile is public and accessible — that's the bare minimum, but it's a start.");
   }
 
   return strengths.slice(0, 2);
 };
 
-// pick 2 problems
+// ─── 2 honest problems ───────────────────────────────────────────────────────
 const getProblems = (userData, repoList, topLangs) => {
   const problems = [];
   const noDesc = repoList.filter((r) => !r.description);
-  const noForked = repoList.filter((r) => r.fork);
+  const forkedRepos = repoList.filter((r) => r.fork);
   const totalStars = repoList.reduce((sum, r) => sum + r.stargazers_count, 0);
   const langCount = Object.keys(topLangs).length;
 
   if (!userData.bio || userData.bio.length < 15) {
     problems.push(
-      `No bio (or basically empty). This is literally the first thing a recruiter reads. Two lines, what you do, what you're learning — done.`
+      `There's no bio on your profile. This is literally the first thing recruiters and collaborators read — two sentences about what you build and what you're learning is all it takes.`
     );
   }
 
   if (noDesc.length > 2) {
     const example = noDesc[0]?.name;
     problems.push(
-      `${noDesc.length} repos with zero descriptions${example ? `, like \`${example}\`` : ""}. That's not mysterious, it's just lazy. One sentence is all it takes.`
+      `${noDesc.length} repos have no description${example ? `, including \`${example}\`` : ""}. One sentence per repo is all you need — without it, people have no idea what they're looking at.`
     );
   }
 
-  if (noForked.length > repoList.length * 0.5 && noForked.length > 3) {
+  if (forkedRepos.length > repoList.length * 0.5 && forkedRepos.length > 3) {
     problems.push(
-      `Too many forked repos clogging your profile. Forks look like clutter unless you actually contributed to them. Either archive 'em or delete.`
+      `A lot of your visible repos are forks. Unless you've actually contributed to them, they take up space without adding much to your profile. Archive or hide the ones you're not using.`
     );
   }
 
   if (!userData.blog && !userData.twitter_username) {
     problems.push(
-      `No website or social link on your profile. Even a portfolio site or LinkedIn URL makes you look 3x more legit — it's a 30-second fix.`
+      `No website or external link on your profile. Even just adding a portfolio URL or LinkedIn makes you look more established — it takes about 30 seconds to add.`
     );
   }
 
   if (totalStars < 3 && userData.public_repos > 5) {
     problems.push(
-      `None of your repos are really getting any traction... that usually means either the READMEs are weak or you're not sharing your work anywhere. Build in public — tweet it, post it on Reddit, something.`
+      `Your repos aren't getting much visibility. Usually that means either the READMEs aren't explaining the value clearly, or you're not sharing the work anywhere. Post about it — Reddit, Twitter, dev forums, somewhere.`
     );
   }
 
   if (langCount < 2 && userData.public_repos > 3) {
     problems.push(
-      `Everything's in one language. Nothing wrong with going deep, but showing even basic JS + CSS or Python + SQL makes your profile way more interesting.`
+      `Everything is in one language right now. Going deep is fine, but showing even a basic understanding of one or two other technologies makes your profile considerably more interesting.`
     );
   }
 
-  // fallback
   if (problems.length === 0) {
     problems.push(
-      `Honestly no major red flags, but your contribution graph could use some more green. Consistency matters.`
+      `No major issues stand out, but your contribution activity could be more consistent. Regular commits — even small ones — show you're actively engaged.`
     );
   }
 
   return problems.slice(0, 2);
 };
 
-// 3 actionable steps, specific
+// ─── 3 specific, actionable next steps ───────────────────────────────────────
 const getActions = (userData, repoList) => {
   const actions = [];
   const noDesc = repoList.filter((r) => !r.description);
   const topRepo = [...repoList].sort((a, b) => b.stargazers_count - a.stargazers_count)[0];
 
   if (!userData.bio || userData.bio.length < 15) {
-    actions.push(`Write a 1-2 line bio RIGHT NOW. Something like "Frontend dev. Learning TypeScript + Node. Building stuff."`);
+    actions.push(
+      `Write a 1–2 line bio right now. Keep it simple and direct — what you build, what you're currently learning. Something like "Full-stack developer. Working with React and Node. Open to collaborating."`
+    );
   } else {
-    actions.push(`Pin your 2-3 best repos to the top of your profile — don't make people scroll through everything.`);
+    actions.push(
+      `Pin your 2–3 strongest repos at the top of your profile so they're the first thing anyone sees — don't make people dig through everything.`
+    );
   }
 
   if (noDesc.length > 0) {
     actions.push(
-      `Add a one-line description to every repo, especially \`${noDesc[0]?.name || "your repos"}\`. Takes 10 mins, saves a recruiter from bouncing.`
+      `Add a one-line description to every repo, starting with \`${noDesc[0]?.name || "your repos"}\`. It takes about 10 minutes and immediately makes your profile easier to read.`
     );
   } else if (topRepo) {
     actions.push(
-      `Beef up the README on \`${topRepo.name}\` — add a screenshot, a quick "how to run" section, and what you learned building it.`
+      `Improve the README on \`${topRepo.name}\` — add a screenshot or demo gif, a "how to run it" section, and a brief note on what you learned while building it.`
     );
   }
 
   if (!userData.blog) {
-    actions.push(`Add a portfolio link or even your LinkedIn to your profile. Literally just paste the URL in the "website" field.`);
+    actions.push(
+      `Add a portfolio link or your LinkedIn URL to your profile. Even a simple personal site counts — it gives people somewhere to go beyond your GitHub.`
+    );
   } else {
-    actions.push(`Find 1 open source repo related to what you use and drop a PR — even fixing a typo in docs counts and looks good.`);
+    actions.push(
+      `Find one open-source project you actually use and open a pull request — even fixing a documentation typo is a real contribution and shows up on your profile.`
+    );
   }
 
   return actions;
 };
 
-// rating logic
+// ─── Numeric score based on profile data ─────────────────────────────────────
 const getRating = (userData, repoList, topLangs) => {
-  let score = 4; // start from 4/10
+  let score = 4;
   const totalStars = repoList.reduce((sum, r) => sum + r.stargazers_count, 0);
   const reposWithDesc = repoList.filter((r) => r.description).length;
 
@@ -183,18 +195,18 @@ const getRating = (userData, repoList, topLangs) => {
   if (userData.followers >= 10) score += 0.5;
 
   score = Math.min(9.5, Math.max(2, score));
-  return Math.round(score * 2) / 2; // round to nearest 0.5
+  return Math.round(score * 2) / 2;
 };
 
 const getRatingReason = (score) => {
-  if (score >= 8) return "Strong profile — needs minor polish, not an overhaul.";
-  if (score >= 6.5) return "Solid foundation, but a few fixes away from being really impressive.";
-  if (score >= 5) return "It's okay, but okay doesn't get callbacks. Fix the basics first.";
-  if (score >= 3) return "Needs real work before you start sending this to companies.";
-  return "Start from scratch on the presentation layer — the code might be fine but no one will know.";
+  if (score >= 8) return "Strong profile — a few finishing touches away from excellent.";
+  if (score >= 6.5) return "Solid foundation with some clear opportunities to improve.";
+  if (score >= 5) return "Functional, but there are some straightforward fixes that would make a real difference.";
+  if (score >= 3) return "Needs some work before you're comfortable sharing this with potential employers.";
+  return "The groundwork is there — focus on the presentation and it'll tell a much better story.";
 };
 
-// main export
+// ─── Main export ─────────────────────────────────────────────────────────────
 export const generateReview = (userData, repoList, topLangs) => {
   const opener = getOpener(userData, repoList, topLangs);
   const strengths = getStrengths(userData, repoList, topLangs);
@@ -203,12 +215,5 @@ export const generateReview = (userData, repoList, topLangs) => {
   const rating = getRating(userData, repoList, topLangs);
   const ratingReason = getRatingReason(rating);
 
-  return {
-    opener,
-    strengths,
-    problems,
-    actions,
-    rating,
-    ratingReason,
-  };
+  return { opener, strengths, problems, actions, rating, ratingReason };
 };
