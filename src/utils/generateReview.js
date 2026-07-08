@@ -208,12 +208,25 @@ const getRatingReason = (score) => {
 
 // ─── Main export ─────────────────────────────────────────────────────────────
 export const generateReview = (userData, repoList, topLangs) => {
-  const opener = getOpener(userData, repoList, topLangs);
-  const strengths = getStrengths(userData, repoList, topLangs);
-  const problems = getProblems(userData, repoList, topLangs);
-  const actions = getActions(userData, repoList);
-  const rating = getRating(userData, repoList, topLangs);
+  // Defensive guards — normalize inputs so nothing downstream can .map() on a non-array
+  const safeRepoList = Array.isArray(repoList) ? repoList : [];
+  const safeLangs = topLangs && typeof topLangs === "object" && !Array.isArray(topLangs) ? topLangs : {};
+  const safeUser = userData && typeof userData === "object" ? userData : {};
+
+  const opener = getOpener(safeUser, safeRepoList, safeLangs);
+  const strengths = getStrengths(safeUser, safeRepoList, safeLangs);
+  const problems = getProblems(safeUser, safeRepoList, safeLangs);
+  const actions = getActions(safeUser, safeRepoList);
+  const rating = getRating(safeUser, safeRepoList, safeLangs);
   const ratingReason = getRatingReason(rating);
 
-  return { opener, strengths, problems, actions, rating, ratingReason };
+  // Guarantee every field is an array — ProfileReview calls .map() on all of these
+  return {
+    opener: opener || "",
+    strengths: Array.isArray(strengths) ? strengths : [],
+    problems: Array.isArray(problems) ? problems : [],
+    actions: Array.isArray(actions) ? actions : [],
+    rating: typeof rating === "number" ? rating : 0,
+    ratingReason: ratingReason || "",
+  };
 };
